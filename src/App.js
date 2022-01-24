@@ -1,80 +1,125 @@
 import React, { useState } from "react";
-import "./styles.css";
-
-import Header from "./components/Header";
-import CreateArea from "./components/CreateArea";
-import Note from "./components/Note";
-import Count from "./components/Count";
-import Footer from "./components/Footer";
 
 //bootstrap
 import SignUp from "./components/SignUp";
-import { Container } from "react-bootstrap"
-// import { AuthProvider } from "./contexts/AuthContext"
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom"
-import Login from "./components/Login"
-import PrivateRoute from "./components/PrivateRoute"
-import ForgotPassword from "./components/ForgotPassword"
+import { Container, Navbar, NavDropdown } from "react-bootstrap";
+//react route
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import Login from "./components/Login";
+import PrivateRoute from "./components/PrivateRoute";
+import ForgotPassword from "./components/ForgotPassword";
 
+import ProtectedRoute from "./components/ProtectedRoute";
+import Main from "./components/Main";
 
+//authentication context
+import { useAuth } from "./contexts/AuthContext";
+
+//react bootstrap icon
+import { FaUserCircle } from "react-icons/fa";
+
+//need to fix the inline style(minWidth:450px ) in signUp and login page
 
 function App(props) {
-  const [notes, setNotes] = useState([]);
-
-  function addNote(newNote) {
-    setNotes((prevValue) => {
-      return [...prevValue, newNote];
-    });
-  }
-
-  function deleteNotes(id) {
-    setNotes((preValue) => {
-      return [...preValue.filter((note, index) => index !== id)];
-    });
-  }
+  const { isLogin } = useAuth();
   return (
     <div className="App">
-
-<Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <div className="w-100" style={{ maxWidth: "650px" }}>
+      <Container
+        className="d-flex align-items-center justify-content-center"
+        style={{ minHeight: "100vh" }}
+      >
         <Router>
-         
-            <Switch>
+          {isLogin ? (
+            <Navbar
+              bg="light"
+              variant="dark"
+              expand="lg"
+              className="navbar navbar-expand-lg navbar-dark fixed-top"
+            >
+              <Container>
+                <span>
+                  <img
+                    src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png"
+                    alt="logo"
+                  />
+                  <Navbar.Brand style={{ color: "black" }}>
+                    Keep Clone
+                  </Navbar.Brand>
+                </span>
 
-              <Route path="/signup" component={SignUp} />
-              <Route path="/login" component={Login} />
-              <Route path="/forgot-password" component={ForgotPassword} />
-            </Switch>
-          
+                <span style={{ fontSize: "1.5rem" }}>Welcome!</span>
+                <span>
+                  <NavDropdown
+                    title=<FaUserCircle />
+                    style={{ fontSize: "1.5rem" }}
+                    id="basic-nav-dropdown"
+                  >
+                    <NavDropdown.Item>Log out</NavDropdown.Item>
+                  </NavDropdown>
+                </span>
+              </Container>
+            </Navbar>
+          ) : (
+            <Navbar
+              bg="light"
+              variant="dark"
+              expand="lg"
+              className="navbar navbar-expand-lg navbar-dark fixed-top"
+            >
+              <Container>
+                <span>
+                  <img
+                    src="https://www.gstatic.com/images/branding/product/1x/keep_2020q4_48dp.png"
+                    alt="logo"
+                  />
+                  <Navbar.Brand style={{ color: "black" }}>
+                    Keep Clone
+                  </Navbar.Brand>
+                </span>
+
+                <div
+                  className="collapse navbar-collapse"
+                  id="navbarTogglerDemo02"
+                >
+                  <ul className="navbar-nav ml-auto">
+                    <li className="nav-item">
+                      <Link
+                        className="nav-link"
+                        to={"/signin"}
+                        style={{ color: "black" }}
+                      >
+                        Login
+                      </Link>
+                    </li>
+                    <li className="nav-item">
+                      <Link
+                        className="nav-link"
+                        to={"/signup"}
+                        style={{ color: "black" }}
+                      >
+                        Sign up
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </Container>
+            </Navbar>
+          )}
+
+          <div className="auth-wrapper">
+            <div className="auth-inner">
+              <Switch>
+                <Route exact path="/" component={Login} />
+                <Route path="/signin" component={Login} />
+                <Route path="/signup" component={SignUp} />
+                <ProtectedRoute exact path="/main">
+                  <Main />
+                </ProtectedRoute>
+              </Switch>
+            </div>
+          </div>
         </Router>
-      </div>
-    </Container>
-
-
-
-
-      <Header />
-      <Count
-        count={
-          notes.length === 0
-            ? "Empty"
-            : `Showing ${notes.length} Notes in Database`
-        }
-      />
-      <CreateArea onAdd={addNote} />
-      {notes.map((note, index) => (
-        <Note
-          key={index}
-          id={index}
-          title={note.title}
-          content={note.content}
-          onDelete={deleteNotes}
-        />
-      ))}
-      <Footer />
+      </Container>
     </div>
   );
 }

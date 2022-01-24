@@ -1,5 +1,6 @@
+import {useEffect, useState} from "react";
 import { initializeApp } from "firebase/app";
-import {getAuth, createUserWithEmailAndPassword} from "firebase/auth";
+import {getAuth, createUserWithEmailAndPassword,onAuthStateChanged, signInWithEmailAndPassword,signOut } from "firebase/auth";
 
 
 //initialize the firebase
@@ -17,8 +18,33 @@ const app = initializeApp(firebaseConfig);
 
 export default app;
 
-const auth = getAuth();
+//authentication handler
+export const auth = getAuth();
 
-export const signUpFunc = (email, password) => {
-    return createUserWithEmailAndPassword(auth, email, password);
-}
+// export const signUpFunc = (email, password) => {
+//     return createUserWithEmailAndPassword(auth, email, password);
+// }
+
+// //Custom hook to check the auth state in Firebase
+// export const useAuth = () => {
+//   const [currentUser, setCurrentUser] = useState();
+
+//   useEffect(() => {
+//     const unSubscribe = onAuthStateChanged(auth, user => setCurrentUser(user));
+//     return unSubscribe;
+//   },[]);
+
+//   return currentUser;
+// }
+
+
+
+// //sign out user
+// export const logOut = () => {
+//   return signOut(auth);
+// }
+
+// //login user
+// export const logIn = (email, password) => {
+//   return signInWithEmailAndPassword(auth, email,password);
+// }
